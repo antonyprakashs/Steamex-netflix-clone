@@ -106,6 +106,7 @@ const Login = () => {
                 <input type="checkbox" defaultChecked />
                 Remember me
               </label>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a href="#" className="need-help">Forgot password?</a>
             </div>
           </form>
