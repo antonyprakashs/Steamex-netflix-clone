@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+
 import './Login.css';
 
 const Signup = () => {
@@ -28,21 +28,24 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/signup', {
-        email,
-        password,
-        name
-      });
-
-      if (response.status === 201) {
-        navigate('/login');
+      // Mock signup with localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      if (users.find(u => u.email === email)) {
+        setError('Email already exists. Please log in.');
+        return;
       }
+      
+      const newUser = { id: Date.now(), email, password, name };
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      navigate('/login');
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.message);
-      } else {
-        setError('An error occurred. Please try again later.');
-      }
+      setError('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }

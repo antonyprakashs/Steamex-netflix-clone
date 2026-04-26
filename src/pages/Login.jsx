@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+
 import './Login.css';
 
 const Login = () => {
@@ -22,20 +22,22 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
-        email,
-        password
-      });
+      // Mock login with localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-      if (response.status === 200) {
-        navigate('/dashboard', { state: { user: response.data.user } });
+      if (user) {
+        // Strip password before passing user data
+        const { password: _, ...userData } = user;
+        navigate('/dashboard', { state: { user: userData } });
+      } else {
+        setError('Invalid email or password.');
       }
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.message);
-      } else {
-        setError('An error occurred. Please try again later.');
-      }
+      setError('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
